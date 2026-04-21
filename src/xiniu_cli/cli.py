@@ -111,6 +111,13 @@ def parse_json_value(raw: str) -> Any:
         return raw
 
 
+def load_json_file_payload(file_path: str) -> dict[str, Any]:
+    payload = json.loads(Path(file_path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("--json-file must contain a JSON object.")
+    return payload
+
+
 def parse_key_value_pairs(pairs: list[str]) -> dict[str, Any]:
     arguments: dict[str, Any] = {}
     for pair in pairs:
@@ -125,16 +132,25 @@ def parse_key_value_pairs(pairs: list[str]) -> dict[str, Any]:
 
 def build_call_arguments(
     json_payload: str | None,
+    json_file: str | None,
     pairs: list[str],
 ) -> dict[str, Any] | None:
-    if json_payload and pairs:
-        raise ValueError("Use either --json or --arg, not both.")
+    input_modes = [
+        json_payload is not None,
+        json_file is not None,
+        bool(pairs),
+    ]
+    if sum(input_modes) > 1:
+        raise ValueError("Use only one of --json, --json-file, or --arg.")
 
     if json_payload:
         payload = json.loads(json_payload)
         if not isinstance(payload, dict):
             raise ValueError("--json must decode to an object.")
         return payload
+
+    if json_file:
+        return load_json_file_payload(json_file)
 
     if pairs:
         return parse_key_value_pairs(pairs)
@@ -267,6 +283,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--json",
         dest="json_payload",
         help='JSON object payload, for example: \'{"firm_name":"..."}\'',
+    )
+    call_parser.add_argument(
+        "--json-file",
+        help="Read a JSON object payload from a file.",
     )
     call_parser.add_argument(
         "--arg",
@@ -407,7 +427,11 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.command == "call":
-            call_args = build_call_arguments(args.json_payload, args.arg)
+            call_args = build_call_arguments(
+                args.json_payload,
+                args.json_file,
+                args.arg,
+            )
             result = asyncio.run(call_tool(server_url, args.tool_name, call_args))
             if args.raw:
                 print(json.dumps(result, ensure_ascii=False, indent=2))

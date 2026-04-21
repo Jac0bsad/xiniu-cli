@@ -4,15 +4,13 @@ build-backend = "uv_build"
 
 [project]
 name = "xiniu-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Official command-line client for the Xiniu MCP server"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [
-  { name = "Jacob Lee" },
-]
+authors = [{ name = "Jacob Lee" }]
 keywords = ["cli", "mcp", "xiniu"]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -25,10 +23,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Utilities",
 ]
-dependencies = [
-  "mcp>=1.27.0",
-  "python-dotenv>=1.0.0",
-]
+dependencies = ["mcp>=1.27.0", "python-dotenv>=1.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/Jac0bsad/xiniu-cli"
@@ -39,9 +34,7 @@ Issues = "https://github.com/Jac0bsad/xiniu-cli/issues"
 xiniu = "xiniu_cli.cli:main"
 
 [dependency-groups]
-dev = [
-  "pytest>=8.3.5",
-]
+dev = ["pytest>=8.3.5"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

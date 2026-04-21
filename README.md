@@ -19,7 +19,7 @@ http://vip.xiniudata.com/mcp
 
 - 支持列出远端 MCP 工具
 - 支持查看单个工具的完整 schema
-- 支持通过 JSON 或 `KEY=VALUE` 形式传参
+- 支持通过 JSON 字符串、JSON 文件或 `KEY=VALUE` 形式传参
 - 支持把远端工具名直接当作本地子命令调用
 - 支持从命令行、环境变量、`.env`、本地配置文件中解析配置
 - 支持输出简化结果或完整原始 MCP 响应
@@ -97,6 +97,9 @@ xiniu describe get_company_info
 ```bash
 xiniu call get_company_info \
   --json '{"firm_name":"上海烯牛信息技术有限公司","aspect":"企业基本信息"}'
+
+xiniu call get_company_info \
+  --json-file ./payloads/company-info.json
 ```
 
 ## 配置说明
@@ -177,14 +180,34 @@ xiniu list-tools --json
 xiniu describe get_company_info
 ```
 
-### 3. 使用 JSON 调用工具
+### 3. 推荐：使用 JSON 文件调用工具
+
+当参数结构较复杂时，优先使用 `--json-file`。这样可以避免 shell 转义、换行维护和命令历史复用上的问题。
+
+先准备一个文件，例如 `./payloads/company-info.json`：
+
+```json
+{
+  "firm_name": "上海烯牛信息技术有限公司",
+  "aspect": "企业基本信息"
+}
+```
+
+然后调用：
+
+```bash
+xiniu call get_company_info \
+  --json-file ./payloads/company-info.json
+```
+
+### 4. 使用 JSON 字符串调用工具
 
 ```bash
 xiniu call get_company_info \
   --json '{"firm_name":"上海烯牛信息技术有限公司","aspect":"企业基本信息"}'
 ```
 
-### 4. 使用 `--arg` 传参
+### 5. 使用 `--arg` 传参
 
 ```bash
 xiniu call get_data \
@@ -194,7 +217,9 @@ xiniu call get_data \
 
 其中 `VALUE` 支持普通字符串，也支持 JSON 值。
 
-### 5. 直接把工具名当作命令调用
+对于 `get_data` 这类嵌套较深的参数，不建议优先使用 `--arg`，更适合写入 JSON 文件后通过 `--json-file` 传入。
+
+### 6. 直接把工具名当作命令调用
 
 下面命令会被自动转换为 `call` 模式：
 
@@ -204,7 +229,7 @@ xiniu get_company_info \
   --arg 'aspect=企业基本信息'
 ```
 
-### 6. 查看原始 MCP 返回结果
+### 7. 查看原始 MCP 返回结果
 
 默认情况下，CLI 会尽量输出简化后的结构化结果或文本结果；如果你需要完整响应：
 
@@ -219,7 +244,7 @@ xiniu call get_company_info \
 ```text
 xiniu list-tools
 xiniu describe <tool_name>
-xiniu call <tool_name> [--json <payload> | --arg KEY=VALUE ...] [--raw]
+xiniu call <tool_name> [--json <payload> | --json-file <path> | --arg KEY=VALUE ...] [--raw]
 xiniu config set-api-key <api_key>
 xiniu config set-server-url <server_url>
 xiniu config show [--json]
