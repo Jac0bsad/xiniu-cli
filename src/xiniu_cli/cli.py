@@ -8,7 +8,7 @@ from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
 from dotenv import load_dotenv
 
 DEFAULT_SERVER_BASE_URL = "http://vip.xiniudata.com/mcp"
@@ -86,9 +86,7 @@ def get_server_url(explicit_url: str | None, explicit_api_key: str | None) -> st
         or DEFAULT_SERVER_BASE_URL
     )
     api_key = (
-        explicit_api_key
-        or os.environ.get(API_KEY_ENV_VAR)
-        or config.get("api_key")
+        explicit_api_key or os.environ.get(API_KEY_ENV_VAR) or config.get("api_key")
     )
 
     if "api_key=" in server_url:
@@ -162,7 +160,7 @@ async def list_all_tools(url: str) -> list[Any]:
     tools: list[Any] = []
     cursor: str | None = None
 
-    async with streamablehttp_client(url) as (read_stream, write_stream, _):
+    async with streamable_http_client(url) as (read_stream, write_stream, _):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             while True:
@@ -188,7 +186,7 @@ async def call_tool(
     tool_name: str,
     arguments: dict[str, Any] | None,
 ) -> dict[str, Any]:
-    async with streamablehttp_client(url) as (read_stream, write_stream, _):
+    async with streamable_http_client(url) as (read_stream, write_stream, _):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             result = await session.call_tool(tool_name, arguments=arguments)
@@ -268,7 +266,7 @@ def build_parser() -> argparse.ArgumentParser:
     call_parser.add_argument(
         "--json",
         dest="json_payload",
-        help="JSON object payload, for example: '{\"firm_name\":\"...\"}'",
+        help='JSON object payload, for example: \'{"firm_name":"..."}\'',
     )
     call_parser.add_argument(
         "--arg",
@@ -276,7 +274,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help=(
             "Tool argument in KEY=VALUE form. VALUE can be raw text or JSON, "
-            "for example --arg limit=5 or --arg names='[\"A\",\"B\"]'."
+            'for example --arg limit=5 or --arg names=\'["A","B"]\'.'
         ),
     )
     call_parser.add_argument(
@@ -361,20 +359,20 @@ def main(argv: list[str] | None = None) -> int:
                         "api_key": (
                             "cli"
                             if args.api_key
-                            else "env/.env"
-                            if os.environ.get(API_KEY_ENV_VAR)
-                            else "config"
-                            if config.get("api_key")
-                            else "missing"
+                            else (
+                                "env/.env"
+                                if os.environ.get(API_KEY_ENV_VAR)
+                                else "config" if config.get("api_key") else "missing"
+                            )
                         ),
                         "server_url": (
                             "cli"
                             if args.server_url
-                            else "env"
-                            if os.environ.get(SERVER_URL_ENV_VAR)
-                            else "config"
-                            if config.get("server_url")
-                            else "default"
+                            else (
+                                "env"
+                                if os.environ.get(SERVER_URL_ENV_VAR)
+                                else "config" if config.get("server_url") else "default"
+                            )
                         ),
                     },
                 }
