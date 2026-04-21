@@ -1,23 +1,50 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.6,<0.12"]
+build-backend = "uv_build"
 
 [project]
 name = "xiniu-cli"
 version = "0.1.0"
-description = "CLI wrapper for the Xiniu MCP server"
+description = "Official command-line client for the Xiniu MCP server"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "mcp>=1.27.0",
-    "python-dotenv>=1.0.0",
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Jacob Lee" },
 ]
+keywords = ["cli", "mcp", "xiniu"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "mcp>=1.27.0",
+  "python-dotenv>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Jac0bsad/xiniu-cli"
+Repository = "https://github.com/Jac0bsad/xiniu-cli"
+Issues = "https://github.com/Jac0bsad/xiniu-cli/issues"
 
 [project.scripts]
 xiniu = "xiniu_cli.cli:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+[dependency-groups]
+dev = [
+  "pytest>=8.3.5",
+]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv]
+package = true

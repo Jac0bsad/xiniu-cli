@@ -17,13 +17,25 @@ API key 不再写死在代码里。CLI 会按下面的优先级解析配置：
 
 ## 安装
 
-推荐直接安装成命令行工具，安装完成后就可以直接使用 `xiniu`：
+发布到 PyPI 后，推荐直接安装成命令行工具：
+
+```bash
+uv tool install xiniu-cli
+```
+
+如果你更习惯 `pipx`，也可以：
+
+```bash
+pipx install xiniu-cli
+```
+
+如果你是在当前仓库里本地体验，还可以直接从源码安装：
 
 ```bash
 uv tool install --from . xiniu-cli
 ```
 
-如果你更习惯 `pipx`，也可以：
+或者：
 
 ```bash
 pipx install .
@@ -34,6 +46,21 @@ pipx install .
 ```bash
 uv sync
 ```
+
+## 构建与发布
+
+本项目使用 `uv` 的现代打包/发布流程：
+
+```bash
+uv build --no-sources
+```
+
+构建产物会输出到 `dist/` 目录，包括 `.tar.gz` 和 `.whl`。
+
+仓库内置了 GitHub Actions 发布工作流，推荐使用 PyPI Trusted Publishing。配置好 PyPI 的 trusted publisher 后，发布 GitHub Release 即可自动执行：
+
+1. `uv build --no-sources`
+2. `uv publish`
 
 ## 配置 API Key
 
