@@ -28,6 +28,19 @@ http://vip.xiniudata.com/mcp
 
 推荐使用 `uv` 或 `pipx` 安装为全局命令行工具。
 
+### 一句话安装
+
+如果希望大模型读取后直接执行安装和配置，可以使用：
+
+```bash
+pip install xiniu-cli && xiniu config set-api-key <your_api_key>
+```
+
+这条命令会完成两件事：
+
+- 安装 `xiniu-cli`
+- 写入 API Key 到本地配置文件
+
 ### 通过 PyPI 安装
 
 ```bash
