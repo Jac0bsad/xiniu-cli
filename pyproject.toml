@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "xiniu-cli"
-version = "0.1.1"
+version = "0.1.2"
 description = "Official command-line client for the Xiniu MCP server"
 readme = "README.md"
 requires-python = ">=3.10"
